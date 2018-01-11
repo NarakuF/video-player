@@ -6,10 +6,8 @@ import './index.css';
 const videoJsOptions = {
     autoplay: true,
     controls: true,
-    techOrder: ['html5', 'flash', 'youtube'],
-    sources: [{
-        src: 'http://techslides.com/demos/samples/sample.mp4'
-    }]
+    width: "800",
+    height: "600",
 };
 
 ReactDOM.render(<VideoPlayer {...videoJsOptions} />, document.getElementById('root'));

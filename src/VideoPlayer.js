@@ -28,8 +28,11 @@ export default class VideoPlayer extends React.Component {
         if (url.substring(url.length - 3) == "mp4") {
             this.player.src({ type: 'video/mp4', src: url });
         }
-        else {
+        else if (url.includes("www.youtube.com")) {
             this.player.src({ type: 'video/youtube', src: url });
+        }
+        else {
+            this.player.src({});
         }
     }
 
@@ -41,7 +44,7 @@ export default class VideoPlayer extends React.Component {
                     <button className="btn btn-primary" type="submit">Submit</button>
                 </form>
                 <div data-vjs-player className="col-md-12">
-                    <video ref={node => this.videoNode = node} className="video-js" width="800" height="600"></video>
+                    <video ref={node => this.videoNode = node} className="video-js"></video>
                 </div>
             </div>
         )
