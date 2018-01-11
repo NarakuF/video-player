@@ -5,7 +5,9 @@
   "dependencies": {
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "react-scripts": "1.0.17"
+    "react-scripts": "1.0.17",
+    "video.js": "^6.6.0",
+    "videojs-youtube": "^2.4.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -13,7 +15,5 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "devDependencies": {
-    "video.js": "^6.6.0"
-  }
+  "devDependencies": {}
 }

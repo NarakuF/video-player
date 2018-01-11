@@ -1,5 +1,6 @@
 import React from 'react';
 import videojs from 'video.js';
+import videojsYoutube from 'videojs-youtube';
 
 export default class VideoPlayer extends React.Component {
     constructor(props) {
@@ -23,7 +24,13 @@ export default class VideoPlayer extends React.Component {
 
     handleSourceChange(event) {
         event.preventDefault();
-        this.player.src({src: event.target.elements.source.value});
+        let url = event.target.elements.source.value;
+        if (url.substring(url.length - 3) == "mp4") {
+            this.player.src({ type: 'video/mp4', src: url });
+        }
+        else {
+            this.player.src({ type: 'video/youtube', src: url });
+        }
     }
 
     render() {
@@ -34,7 +41,7 @@ export default class VideoPlayer extends React.Component {
                     <button className="btn btn-primary" type="submit">Submit</button>
                 </form>
                 <div data-vjs-player className="col-md-12">
-                    <video ref={node => this.videoNode = node} className="video-js" width="800" height="450"></video>
+                    <video ref={node => this.videoNode = node} className="video-js" width="800" height="600"></video>
                 </div>
             </div>
         )

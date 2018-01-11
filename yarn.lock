@@ -6364,7 +6364,7 @@ verror@1.10.0:
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
 
-video.js@^6.6.0:
+"video.js@^5.6.0 || ^6.2.8", video.js@^6.6.0:
   version "6.6.0"
   resolved "https://registry.yarnpkg.com/video.js/-/video.js-6.6.0.tgz#91760dfdb9c95a43a005bb03888ed6c5c6e785b0"
   dependencies:
@@ -6392,6 +6392,12 @@ videojs-vtt.js@0.12.4:
   resolved "https://registry.yarnpkg.com/videojs-vtt.js/-/videojs-vtt.js-0.12.4.tgz#38f2499e31efb3fa93590ddad4cb663275a4b161"
   dependencies:
     global "^4.3.1"
+
+videojs-youtube@^2.4.1:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/videojs-youtube/-/videojs-youtube-2.4.1.tgz#4ebd6736a09c636f79fcc324befd9db230780bfc"
+  dependencies:
+    video.js "^5.6.0 || ^6.2.8"
 
 vm-browserify@0.0.4:
   version "0.0.4"

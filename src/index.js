@@ -6,6 +6,7 @@ import './index.css';
 const videoJsOptions = {
     autoplay: true,
     controls: true,
+    techOrder: ['html5', 'flash', 'youtube'],
     sources: [{
         src: 'http://techslides.com/demos/samples/sample.mp4'
     }]
