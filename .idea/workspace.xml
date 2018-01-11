@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c4d7f442-669a-454d-bc3f-aa23c00e6f90" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/src/VideoPlayer.js" afterPath="$PROJECT_DIR$/src/VideoPlayer.js" />
-      <change beforePath="$PROJECT_DIR$/src/index.js" afterPath="$PROJECT_DIR$/src/index.js" />
-    </list>
+    <list default="true" id="c4d7f442-669a-454d-bc3f-aa23c00e6f90" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
     <ignored path="$PROJECT_DIR$/tmp/" />
@@ -42,8 +39,8 @@
       <file leaf-file-name="VideoPlayer.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/VideoPlayer.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="164">
-              <caret line="35" column="9" lean-forward="true" selection-start-line="35" selection-start-column="9" selection-end-line="35" selection-end-column="9" />
+            <state relative-caret-position="374">
+              <caret line="22" column="5" lean-forward="true" selection-start-line="22" selection-start-column="5" selection-end-line="22" selection-end-column="5" />
               <folding>
                 <element signature="e#0#26#0" expanded="true" />
               </folding>
@@ -166,12 +163,12 @@
       <option name="presentableId" value="Default" />
       <updated>1515686325093</updated>
       <workItem from="1515686326185" duration="503000" />
-      <workItem from="1515686922072" duration="10586000" />
+      <workItem from="1515686922072" duration="11847000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="11089000" />
+    <option name="totallyTimeSpent" value="12350000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="780" y="15" width="1105" height="987" extended-state="0" />
@@ -317,8 +314,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/VideoPlayer.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="164">
-          <caret line="35" column="9" lean-forward="true" selection-start-line="35" selection-start-column="9" selection-end-line="35" selection-end-column="9" />
+        <state relative-caret-position="374">
+          <caret line="22" column="5" lean-forward="true" selection-start-line="22" selection-start-column="5" selection-end-line="22" selection-end-column="5" />
           <folding>
             <element signature="e#0#26#0" expanded="true" />
           </folding>
