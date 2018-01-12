@@ -25,14 +25,11 @@ export default class VideoPlayer extends React.Component {
     handleSourceChange(event) {
         event.preventDefault();
         let url = event.target.elements.source.value;
-        if (url.substring(url.length - 3) == "mp4") {
-            this.player.src({ type: 'video/mp4', src: url });
-        }
-        else if (url.includes("www.youtube.com")) {
+        if (url.includes("www.youtube.com")) {
             this.player.src({ type: 'video/youtube', src: url });
         }
         else {
-            this.player.src({});
+            this.player.src({ src: url });
         }
     }
 
