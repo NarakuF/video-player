@@ -6,6 +6,7 @@ import './index.css';
 const videoJsOptions = {
     autoplay: true,
     controls: true,
+    sources: [{ src: '//vjs.zencdn.net/v/oceans.mp4' }],
     width: "800",
     height: "600",
 };

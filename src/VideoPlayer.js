@@ -5,14 +5,18 @@ import videojsYoutube from 'videojs-youtube';
 export default class VideoPlayer extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            like: false,
+            likes: [],
+        }
         this.handleSourceChange = this.handleSourceChange.bind(this);
+        this.handleClick = this.handleClick.bind(this);
     }
 
     componentDidMount() {
         // instantiate Video.js
-        this.player = videojs(this.videoNode, this.props, function onPlayerReady() {
-            console.log('onPlayerReady', this);
-        });
+        this.player = videojs(this.videoNode, this.props);
+        console.log(this.player.duration());
     }
 
     // destroy player on unmount
@@ -33,15 +37,33 @@ export default class VideoPlayer extends React.Component {
         }
     }
 
+    handleClick() {
+        if (!this.state.like) {
+            this.setState(prevState => ({ likes: [...prevState.likes, {from: this.player.currentTime()}] }));
+        }
+        else {
+            let copy = this.state.likes.slice();
+            copy[copy.length - 1].to = this.player.currentTime();
+            this.setState({ likes: copy });
+        }
+        this.setState(prevState => ({ like: !prevState.like }));
+        console.log(this.state.likes);
+    }
+
     render() {
         return (
             <div className="row">
-                <form className="form-inline col-md-12 my-3" onSubmit={this.handleSourceChange}>
-                    <input type="text" className="form-control w-75 mr-auto" name="source"/>
-                    <button className="btn btn-primary" type="submit">Submit</button>
+                <form className="form-inline col-md-12 my-4" onSubmit={this.handleSourceChange}>
+                    <input className="form-control w-75 mr-auto" type="text" name="source"/>
+                    <button className="btn btn-outline-primary" type="submit">View</button>
                 </form>
                 <div data-vjs-player className="col-md-12">
                     <video ref={node => this.videoNode = node} className="video-js"></video>
+                </div>
+                <div className="mx-auto my-4">
+                    <button className="btn btn-outline-danger mr-5" onClick={this.handleClick}>
+                        { this.state.like ? 'Unike' : 'Like' }
+                    </button>
                 </div>
             </div>
         )
