@@ -1,6 +1,8 @@
 import React from 'react';
 import videojs from 'video.js';
 import videojsYoutube from 'videojs-youtube';
+import videojsMarker from 'videojs-markers';
+import './videojs.markers.css';
 
 export default class VideoPlayer extends React.Component {
     constructor(props) {
@@ -16,7 +18,7 @@ export default class VideoPlayer extends React.Component {
     componentDidMount() {
         // instantiate Video.js
         this.player = videojs(this.videoNode, this.props);
-        console.log(this.player.duration());
+        this.player.markers({ markers: []});
     }
 
     // destroy player on unmount
@@ -33,13 +35,18 @@ export default class VideoPlayer extends React.Component {
             this.player.src({ type: 'video/youtube', src: url });
         }
         else {
-            this.player.src({ src: url });
+            this.player.src({ src: url  });
         }
     }
 
     handleClick() {
         if (!this.state.like) {
             this.setState(prevState => ({ likes: [...prevState.likes, {from: this.player.currentTime()}] }));
+            this.player.markers.add([{
+                time: this.player.currentTime(),
+                text: "I'm added dynamically"
+            }]);
+            console.log(this.player.markers);
         }
         else {
             let copy = this.state.likes.slice();
@@ -64,6 +71,9 @@ export default class VideoPlayer extends React.Component {
                     <button className="btn btn-outline-danger mr-5" onClick={this.handleClick}>
                         { this.state.like ? 'Unike' : 'Like' }
                     </button>
+                </div>
+                <div className="col-md-12">
+                    <h4>Description</h4>
                 </div>
             </div>
         )

@@ -6387,6 +6387,10 @@ videojs-ie8@1.1.2:
   dependencies:
     es5-shim "^4.5.1"
 
+videojs-markers@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/videojs-markers/-/videojs-markers-1.0.0.tgz#f544ab6c29fa7601cafe1bc45f20083724079b16"
+
 videojs-vtt.js@0.12.4:
   version "0.12.4"
   resolved "https://registry.yarnpkg.com/videojs-vtt.js/-/videojs-vtt.js-0.12.4.tgz#38f2499e31efb3fa93590ddad4cb663275a4b161"
