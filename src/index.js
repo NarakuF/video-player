@@ -6,9 +6,10 @@ import './index.css';
 const videoJsOptions = {
     autoplay: true,
     controls: true,
+    preload: 'auto',
     sources: [{ src: '//vjs.zencdn.net/v/oceans.mp4' }],
-    width: "800",
-    height: "600",
+    width: '1200',
+    height: '700',
 };
 
 ReactDOM.render(<VideoPlayer {...videoJsOptions} />, document.getElementById('root'));

@@ -18,7 +18,7 @@ export default class VideoPlayer extends React.Component {
     componentDidMount() {
         // instantiate Video.js
         this.player = videojs(this.videoNode, this.props);
-        this.player.markers({ markers: []});
+        this.player.markers({markers: [] });
     }
 
     // destroy player on unmount
@@ -40,39 +40,48 @@ export default class VideoPlayer extends React.Component {
     }
 
     handleClick() {
+        let markers = this.player.markers.getMarkers();
         if (!this.state.like) {
-            this.setState(prevState => ({ likes: [...prevState.likes, {from: this.player.currentTime()}] }));
+            //this.setState(prevState => ({ likes: [...prevState.likes, {from: this.player.currentTime()}] }));
             this.player.markers.add([{
                 time: this.player.currentTime(),
-                text: "I'm added dynamically"
+                text: "Like " + markers.length,
             }]);
-            console.log(this.player.markers);
         }
         else {
-            let copy = this.state.likes.slice();
+            /*let copy = this.state.likes.slice();
             copy[copy.length - 1].to = this.player.currentTime();
             this.setState({ likes: copy });
-        }
+            this.player.markers.add([{
+                time: copy[copy.length - 1].from,
+                text: "Like " + copy.length,
+                duration: copy[copy.length - 1].to - copy[copy.length - 1].from
+            }]);*/
+            markers[markers.length - 1].duration = this.player.currentTime() -
+                markers[markers.length - 1].time;
+            this.player.markers.updateTime();
+          }
         this.setState(prevState => ({ like: !prevState.like }));
-        console.log(this.state.likes);
+        console.log(markers);
     }
 
     render() {
         return (
-            <div className="row">
-                <form className="form-inline col-md-12 my-4" onSubmit={this.handleSourceChange}>
-                    <input className="form-control w-75 mr-auto" type="text" name="source"/>
+            <div className="row justify-content-center">
+                <form className="form-inline col-md-12 my-4 d-flex justify-content-center" onSubmit={this.handleSourceChange}>
+                    <input className="form-control w-75 mr-5" type="text" name="source"/>
                     <button className="btn btn-outline-primary" type="submit">View</button>
                 </form>
-                <div data-vjs-player className="col-md-12">
+                <div data-vjs-player className="col-md-10">
                     <video ref={node => this.videoNode = node} className="video-js"></video>
                 </div>
-                <div className="mx-auto my-4">
-                    <button className="btn btn-outline-danger mr-5" onClick={this.handleClick}>
-                        { this.state.like ? 'Unike' : 'Like' }
+                <div className="col-md-10 my-4 d-flex justify-content-center">
+                    {console.log(this.state.like)}
+                    <button className="btn btn-outline-danger" onClick={this.handleClick}>
+                        { this.state.like ? 'Unlike' : 'Like' }
                     </button>
                 </div>
-                <div className="col-md-12">
+                <div className="col-md-10">
                     <h4>Description</h4>
                 </div>
             </div>
