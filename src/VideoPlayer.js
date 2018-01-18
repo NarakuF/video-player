@@ -15,11 +15,11 @@ export default class VideoPlayer extends React.Component {
             likes: [],
             description: "",
         };
-        this.handleSourceChange = this.handleSourceChange.bind(this);
+        this.handleChangeSource = this.handleChangeSource.bind(this);
         this.handleClick = this.handleClick.bind(this);
-        this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
-        this.handleLikeDescriptionChange = this.handleLikeDescriptionChange.bind(this);
-        this.handleRemove = this.handleRemove.bind(this);
+        this.handleChangeDescription = this.handleChangeDescription.bind(this);
+        this.handleChangeLikeDescription = this.handleChangeLikeDescription.bind(this);
+        this.handleDeleteLike = this.handleDeleteLike.bind(this);
         this.handlePlayLike = this.handlePlayLike.bind(this);
     }
 
@@ -36,7 +36,7 @@ export default class VideoPlayer extends React.Component {
         }
     }
 
-    handleSourceChange(event) {
+    handleChangeSource(event) {
         event.preventDefault();
         let url = event.target.elements.source.value;
         if (url.includes("www.youtube.com")) {
@@ -45,6 +45,8 @@ export default class VideoPlayer extends React.Component {
         else {
             this.player.src({src: url});
         }
+        this.player.markers.reset([]);
+        this.setState({ like: false, likes: [], description: ""});
     }
 
     handleClick() {
@@ -64,12 +66,12 @@ export default class VideoPlayer extends React.Component {
         console.log(markers)
     }
 
-    handleDescriptionChange(event) {
+    handleChangeDescription(event) {
         event.preventDefault();
         this.setState({description: event.target.value});
     }
 
-    handleLikeDescriptionChange(event, like) {
+    handleChangeLikeDescription(event, like) {
         let markers = this.player.markers.getMarkers();
         markers.map(m => {
             if (m.key === like.key) {
@@ -79,7 +81,7 @@ export default class VideoPlayer extends React.Component {
         this.setState({likes: markers});
     }
 
-    handleRemove(like) {
+    handleDeleteLike(like) {
         let markers = this.player.markers.getMarkers();
         let i;
         for (i = 0; i < markers.length; i++) {
@@ -100,7 +102,7 @@ export default class VideoPlayer extends React.Component {
         return (
             <div className="row justify-content-center">
                 <form className="form-inline col-md-12 my-4 d-flex justify-content-center"
-                      onSubmit={this.handleSourceChange}>
+                      onSubmit={this.handleChangeSource}>
                     <input className="form-control w-75 mr-5" type="text" name="source"/>
                     <button className="btn btn-outline-primary" type="submit">View</button>
                 </form>
@@ -116,7 +118,7 @@ export default class VideoPlayer extends React.Component {
                     <h4>Description</h4>
                     <textarea className="form-control" rows="3"
                               placeholder={"This is about ..." + this.state.description}
-                              onChange={this.handleDescriptionChange}></textarea>
+                              onChange={this.handleChangeDescription}></textarea>
                 </div>
                 <div className="col-md-10">
                     <h4>Likes</h4>
@@ -134,16 +136,16 @@ export default class VideoPlayer extends React.Component {
                         {this.state.likes.map(like => {
                             return (
                                 <tr key={like.key}>
-                                    <td><button className="btn btn-sm btn-danger"
+                                    <td><button className="btn btn-sm btn-primary"
                                                 onClick={e => this.handlePlayLike(like)}></button></td>
                                     <td>{like.time.toFixed(2)}</td>
                                     <td>{(like.time + like.duration).toFixed(2)}</td>
                                     <td><ContentEditable html={like.text}
-                                                         onChange={e => this.handleLikeDescriptionChange(e, like)}/>
+                                                         onChange={e => this.handleChangeLikeDescription(e, like)}/>
                                     </td>
                                     <td>
                                         <button className="btn btn-sm btn-outline-danger"
-                                                onClick={e => this.handleRemove(like)}>Remove
+                                                onClick={e => this.handleDeleteLike(like)}>Delete
                                         </button>
                                     </td>
                                 </tr>)
