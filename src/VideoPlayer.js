@@ -20,6 +20,7 @@ export default class VideoPlayer extends React.Component {
         this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
         this.handleLikeDescriptionChange = this.handleLikeDescriptionChange.bind(this);
         this.handleRemove = this.handleRemove.bind(this);
+        this.handlePlayLike = this.handlePlayLike.bind(this);
     }
 
     componentDidMount() {
@@ -91,6 +92,10 @@ export default class VideoPlayer extends React.Component {
         console.log(markers)
     }
 
+    handlePlayLike(like) {
+        this.player.currentTime(like.time);
+    }
+
     render() {
         return (
             <div className="row justify-content-center">
@@ -115,19 +120,22 @@ export default class VideoPlayer extends React.Component {
                 </div>
                 <div className="col-md-10">
                     <h4>Likes</h4>
-                    <table className="table table-striped table-bordered">
+                    <table className="table table-striped table-bordered text-center">
                         <thead>
                         <tr>
-                            <th scope="col">From (Second)</th>
-                            <th scope="col">To (Second)</th>
-                            <th scope="col">Description</th>
-                            <th></th>
+                            <th style={{width: '5%'}}></th>
+                            <th style={{width: '10%'}}>From (Second)</th>
+                            <th style={{width: '10%'}}>To (Second)</th>
+                            <th style={{width: '40%'}}>Description</th>
+                            <th style={{width: '5%'}}></th>
                         </tr>
                         </thead>
                         <tbody>
                         {this.state.likes.map(like => {
                             return (
                                 <tr key={like.key}>
+                                    <td><button className="btn btn-sm btn-danger"
+                                                onClick={e => this.handlePlayLike(like)}></button></td>
                                     <td>{like.time.toFixed(2)}</td>
                                     <td>{(like.time + like.duration).toFixed(2)}</td>
                                     <td><ContentEditable html={like.text}
