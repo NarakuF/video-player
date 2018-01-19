@@ -11,16 +11,16 @@ export default class VideoPlayer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            like: false,
-            likes: [],
+            record: false,
+            records: [],
             description: "",
         };
         this.handleChangeSource = this.handleChangeSource.bind(this);
         this.handleClick = this.handleClick.bind(this);
         this.handleChangeDescription = this.handleChangeDescription.bind(this);
-        this.handleChangeLikeDescription = this.handleChangeLikeDescription.bind(this);
-        this.handleDeleteLike = this.handleDeleteLike.bind(this);
-        this.handlePlayLike = this.handlePlayLike.bind(this);
+        this.handleChangeRecordDescription = this.handleChangeRecordDescription.bind(this);
+        this.handleDeleteRecord = this.handleDeleteRecord.bind(this);
+        this.handlePlayRecord = this.handlePlayRecord.bind(this);
     }
 
     componentDidMount() {
@@ -46,15 +46,15 @@ export default class VideoPlayer extends React.Component {
             this.player.src({src: url});
         }
         this.player.markers.reset([]);
-        this.setState({ like: false, likes: [], description: ""});
+        this.setState({ record: false, records: [], description: ""});
     }
 
     handleClick() {
         let markers = this.player.markers.getMarkers();
-        if (!this.state.like) {
+        if (!this.state.record) {
             this.player.markers.add([{
                 time: this.player.currentTime(),
-                text: `Like: ${this.player.currentTime().toFixed(2)}s`,
+                text: "",
             }]);
         }
         else {
@@ -62,7 +62,7 @@ export default class VideoPlayer extends React.Component {
                 markers[markers.length - 1].time;
             this.player.markers.updateTime();
         }
-        this.setState(prevState => ({like: !prevState.like, likes: markers}));
+        this.setState(prevState => ({record: !prevState.record, records: markers}));
         console.log(markers)
     }
 
@@ -71,17 +71,17 @@ export default class VideoPlayer extends React.Component {
         this.setState({description: event.target.value});
     }
 
-    handleChangeLikeDescription(event, like) {
+    handleChangeRecordDescription(event, like) {
         let markers = this.player.markers.getMarkers();
         markers.map(m => {
             if (m.key === like.key) {
                 m.text = event.target.value;
             }
         });
-        this.setState({likes: markers});
+        this.setState({records: markers});
     }
 
-    handleDeleteLike(like) {
+    handleDeleteRecord(like) {
         let markers = this.player.markers.getMarkers();
         let i;
         for (i = 0; i < markers.length; i++) {
@@ -90,12 +90,12 @@ export default class VideoPlayer extends React.Component {
                 break;
             }
         }
-        this.setState({likes: markers});
+        this.setState({records: markers});
         console.log(markers)
     }
 
-    handlePlayLike(like) {
-        this.player.currentTime(like.time);
+    handlePlayRecord(record) {
+        this.player.currentTime(record.time);
     }
 
     render() {
@@ -111,7 +111,7 @@ export default class VideoPlayer extends React.Component {
                 </div>
                 <div className="col-md-10 my-4 d-flex justify-content-center">
                     <button className="btn btn-outline-danger" onClick={this.handleClick}>
-                        {this.state.like ? 'Unlike' : 'Like'}
+                        {this.state.record ? 'Stop recording' : 'Start recording'}
                     </button>
                 </div>
                 <div className="col-md-10 my-4">
@@ -121,7 +121,7 @@ export default class VideoPlayer extends React.Component {
                               onChange={this.handleChangeDescription}></textarea>
                 </div>
                 <div className="col-md-10">
-                    <h4>Likes</h4>
+                    <h4>Online Records</h4>
                     <table className="table table-striped table-bordered text-center">
                         <thead>
                         <tr>
@@ -133,21 +133,21 @@ export default class VideoPlayer extends React.Component {
                         </tr>
                         </thead>
                         <tbody>
-                        {this.state.likes.map(like => {
+                        {this.state.records.map(record => {
                             return (
-                                <tr key={like.key}>
+                                <tr key={record.key}>
                                     <td><button className="btn btn-sm btn-primary"
-                                                onClick={e => this.handlePlayLike(like)}></button></td>
-                                    <td>{like.time.toFixed(2)}</td>
-                                    <td>{(like.time + like.duration).toFixed(2)}</td>
-                                    <td><ContentEditable html={like.text}
-                                                         onChange={e => this.handleChangeLikeDescription(e, like)}/>
+                                                onClick={e => this.handlePlayRecord(record)}></button></td>
+                                    <td>{record.time.toFixed(2)}</td>
+                                    <td>{(record.time + record.duration).toFixed(2)}</td>
+                                    <td><ContentEditable html={record.text}
+                                                         onChange={e => this.handleChangeRecordDescription(e, record)}/>
                                     </td>
-                                    <td>
+                                    {/*<td>
                                         <button className="btn btn-sm btn-outline-danger"
                                                 onClick={e => this.handleDeleteLike(like)}>Delete
                                         </button>
-                                    </td>
+                                    </td>*/}
                                 </tr>)
                         })}
                         </tbody>
