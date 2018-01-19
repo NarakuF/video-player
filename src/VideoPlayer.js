@@ -11,7 +11,7 @@ export default class VideoPlayer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            record: false,
+            record: -1,
             records: [],
             description: "",
         };
@@ -46,23 +46,29 @@ export default class VideoPlayer extends React.Component {
             this.player.src({src: url});
         }
         this.player.markers.reset([]);
-        this.setState({ record: false, records: [], description: ""});
+        this.setState({ record: -1, records: [], description: ""});
     }
 
     handleClick() {
         let markers = this.player.markers.getMarkers();
-        if (!this.state.record) {
+        if (this.state.record < 0) {
             this.player.markers.add([{
                 time: this.player.currentTime(),
                 text: "",
             }]);
+            this.setState({ record: this.player.currentTime() });
         }
         else {
-            markers[markers.length - 1].duration = this.player.currentTime() -
-                markers[markers.length - 1].time;
+            // eslint-disable-next-line
+            markers.map(m => {
+                if (m.time === this.state.record) {
+                    m.duration = this.player.currentTime() - m.time;
+                }
+            })
             this.player.markers.updateTime();
+            this.setState({ record: -1 });
         }
-        this.setState(prevState => ({record: !prevState.record, records: markers}));
+        this.setState(prevState => ({ records: markers }));
         console.log(markers)
     }
 
@@ -71,21 +77,22 @@ export default class VideoPlayer extends React.Component {
         this.setState({description: event.target.value});
     }
 
-    handleChangeRecordDescription(event, like) {
+    handleChangeRecordDescription(event, record) {
         let markers = this.player.markers.getMarkers();
+        // eslint-disable-next-line
         markers.map(m => {
-            if (m.key === like.key) {
+            if (m.key === record.key) {
                 m.text = event.target.value;
             }
         });
         this.setState({records: markers});
     }
 
-    handleDeleteRecord(like) {
+    handleDeleteRecord(record) {
         let markers = this.player.markers.getMarkers();
         let i;
         for (i = 0; i < markers.length; i++) {
-            if (markers[i].key === like.key) {
+            if (markers[i].key === record.key) {
                 this.player.markers.remove([i]);
                 break;
             }
@@ -111,7 +118,7 @@ export default class VideoPlayer extends React.Component {
                 </div>
                 <div className="col-md-10 my-4 d-flex justify-content-center">
                     <button className="btn btn-outline-danger" onClick={this.handleClick}>
-                        {this.state.record ? 'Stop recording' : 'Start recording'}
+                        {this.state.record < 0 ? 'Start recording' : 'Stop recording'}
                     </button>
                 </div>
                 <div className="col-md-10 my-4">
