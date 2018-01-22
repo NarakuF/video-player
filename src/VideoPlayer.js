@@ -67,7 +67,6 @@ export default class VideoPlayer extends React.Component {
             this.setState({ record: -1 });
         }
         this.setState(prevState => ({ records: markers }));
-        console.log(markers)
     }
 
     handleChangeDescription(event) {
@@ -95,12 +94,11 @@ export default class VideoPlayer extends React.Component {
             }
         }
         this.setState({records: markers});
-        console.log(markers)
     }
 
     handlePlayRecord(record) {
         this.player.play(this.player.currentTime(record.time));
-        this.player.on('timeupdate', function () {
+        this.player.on('timeupdate', () => {
             if (this.currentTime() >= record.time + record.duration) {
                 this.pause();
                 this.off('timeupdate');
