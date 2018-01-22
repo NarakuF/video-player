@@ -1,10 +1,9 @@
 import React from 'react';
 import videojs from 'video.js';
-// eslint-disable-next-line
-import videojsYoutube from 'videojs-youtube';
-// eslint-disable-next-line
-import videojsMarker from 'videojs-markers';
-import ContentEditable from 'react-contenteditable'
+import 'videojs-youtube';
+import 'videojs-markers';
+import 'videojs-offset';
+import ContentEditable from 'react-contenteditable';
 import './videojs.markers.css';
 
 export default class VideoPlayer extends React.Component {
@@ -47,6 +46,7 @@ export default class VideoPlayer extends React.Component {
         }
         this.player.markers.reset([]);
         this.setState({ record: -1, records: [], description: ""});
+        console.log(this.state);
     }
 
     handleClick() {
@@ -59,8 +59,7 @@ export default class VideoPlayer extends React.Component {
             this.setState({ record: this.player.currentTime() });
         }
         else {
-            // eslint-disable-next-line
-            markers.map(m => {
+            markers.forEach(m => {
                 if (m.time === this.state.record) {
                     m.duration = this.player.currentTime() - m.time;
                 }
@@ -79,8 +78,7 @@ export default class VideoPlayer extends React.Component {
 
     handleChangeRecordDescription(event, record) {
         let markers = this.player.markers.getMarkers();
-        // eslint-disable-next-line
-        markers.map(m => {
+        markers.forEach(m => {
             if (m.key === record.key) {
                 m.text = event.target.value;
             }
@@ -103,6 +101,17 @@ export default class VideoPlayer extends React.Component {
 
     handlePlayRecord(record) {
         this.player.currentTime(record.time);
+        this.player.play();
+        this.player.on('timeupdate', function () {
+            if (this.currentTime() >= record.time + record.duration) {
+                this.pause();
+            }
+        })
+        /*this.player.offset({
+            start: 1,//record.time,
+            end: 5,//record.time + record.duration,
+            restart_beginning: false,
+        });*/
     }
 
     render() {
@@ -117,14 +126,16 @@ export default class VideoPlayer extends React.Component {
                     <video ref={node => this.videoNode = node} className="video-js"></video>
                 </div>
                 <div className="col-md-10 my-4 d-flex justify-content-center">
-                    <button className="btn btn-outline-danger" onClick={this.handleClick}>
-                        {this.state.record < 0 ? 'Start recording' : 'Stop recording'}
+                    <button type="button" className={"btn btn-outline-danger" + (this.state.record < 0 ? "" : " active")}
+                            data-toggle="button" onClick={this.handleClick}>
+                        {this.state.record < 0 ? 'Record' : 'Stop'}
                     </button>
                 </div>
                 <div className="col-md-10 my-4">
                     <h4>Description</h4>
                     <textarea className="form-control" rows="3"
-                              placeholder={"This is about ..." + this.state.description}
+                              placeholder={"This video is about ..."}
+                              value={this.state.description}
                               onChange={this.handleChangeDescription}></textarea>
                 </div>
                 <div className="col-md-10">
@@ -133,10 +144,9 @@ export default class VideoPlayer extends React.Component {
                         <thead>
                         <tr>
                             <th style={{width: '5%'}}></th>
-                            <th style={{width: '10%'}}>From (Second)</th>
-                            <th style={{width: '10%'}}>To (Second)</th>
+                            <th style={{width: '10%'}}>Begin</th>
+                            <th style={{width: '10%'}}>End</th>
                             <th style={{width: '40%'}}>Description</th>
-                            <th style={{width: '5%'}}></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -147,7 +157,7 @@ export default class VideoPlayer extends React.Component {
                                                 onClick={e => this.handlePlayRecord(record)}></button></td>
                                     <td>{record.time.toFixed(2)}</td>
                                     <td>{(record.time + record.duration).toFixed(2)}</td>
-                                    <td><ContentEditable html={record.text}
+                                    <td className="text-justify"><ContentEditable html={record.text}
                                                          onChange={e => this.handleChangeRecordDescription(e, record)}/>
                                     </td>
                                     {/*<td>
