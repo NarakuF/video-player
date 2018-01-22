@@ -2,7 +2,6 @@ import React from 'react';
 import videojs from 'video.js';
 import 'videojs-youtube';
 import 'videojs-markers';
-import 'videojs-offset';
 import ContentEditable from 'react-contenteditable';
 import './videojs.markers.css';
 
@@ -100,18 +99,13 @@ export default class VideoPlayer extends React.Component {
     }
 
     handlePlayRecord(record) {
-        this.player.currentTime(record.time);
-        this.player.play();
+        this.player.play(this.player.currentTime(record.time));
         this.player.on('timeupdate', function () {
             if (this.currentTime() >= record.time + record.duration) {
                 this.pause();
+                this.off('timeupdate');
             }
-        })
-        /*this.player.offset({
-            start: 1,//record.time,
-            end: 5,//record.time + record.duration,
-            restart_beginning: false,
-        });*/
+        });
     }
 
     render() {

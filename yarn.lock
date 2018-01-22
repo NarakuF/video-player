@@ -2781,14 +2781,7 @@ global-prefix@^1.0.1:
     is-windows "^1.0.1"
     which "^1.2.14"
 
-global@4.3.0:
-  version "4.3.0"
-  resolved "https://registry.yarnpkg.com/global/-/global-4.3.0.tgz#ef7ec4beead579b454f5ebd5e7f303db54f42a2b"
-  dependencies:
-    min-document "^2.6.1"
-    process "~0.5.1"
-
-global@4.3.2, global@^4.3.1, global@^4.3.2, global@~4.3.0:
+global@4.3.2, global@^4.3.1, global@~4.3.0:
   version "4.3.2"
   resolved "https://registry.yarnpkg.com/global/-/global-4.3.2.tgz#e76989268a6c74c38908b1305b10fc0e394e9d0f"
   dependencies:
@@ -4151,7 +4144,7 @@ mimic-fn@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/mimic-fn/-/mimic-fn-1.1.0.tgz#e667783d92e89dbd342818b5230b9d62a672ad18"
 
-min-document@^2.19.0, min-document@^2.6.1:
+min-document@^2.19.0:
   version "2.19.0"
   resolved "https://registry.yarnpkg.com/min-document/-/min-document-2.19.0.tgz#7bd282e3f5842ed295bb748cdd9f1ffa2c824685"
   dependencies:
@@ -6375,20 +6368,6 @@ verror@1.10.0:
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
 
-video.js@^5.19.2:
-  version "5.20.4"
-  resolved "https://registry.yarnpkg.com/video.js/-/video.js-5.20.4.tgz#85d58129e568527ccc179f95f485f547ee3c2e06"
-  dependencies:
-    babel-runtime "^6.9.2"
-    global "4.3.0"
-    safe-json-parse "4.0.0"
-    tsml "1.0.1"
-    videojs-font "2.0.0"
-    videojs-ie8 "1.1.2"
-    videojs-swf "5.4.1"
-    videojs-vtt.js "0.12.4"
-    xhr "2.2.2"
-
 "video.js@^5.6.0 || ^6.2.8", video.js@^6.6.0:
   version "6.6.0"
   resolved "https://registry.yarnpkg.com/video.js/-/video.js-6.6.0.tgz#91760dfdb9c95a43a005bb03888ed6c5c6e785b0"
@@ -6401,10 +6380,6 @@ video.js@^5.19.2:
     videojs-ie8 "1.1.2"
     videojs-vtt.js "0.12.4"
     xhr "2.4.0"
-
-videojs-font@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/videojs-font/-/videojs-font-2.0.0.tgz#af7461ef9d4b95e0334bffb78b2f2ff0364a9034"
 
 videojs-font@2.1.0:
   version "2.1.0"
@@ -6419,17 +6394,6 @@ videojs-ie8@1.1.2:
 videojs-markers@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/videojs-markers/-/videojs-markers-1.0.0.tgz#f544ab6c29fa7601cafe1bc45f20083724079b16"
-
-videojs-offset@^2.0.0-beta.2:
-  version "2.0.0-beta.2"
-  resolved "https://registry.yarnpkg.com/videojs-offset/-/videojs-offset-2.0.0-beta.2.tgz#da919a45b007c733110719a8bd6050aab71b8133"
-  dependencies:
-    global "^4.3.2"
-    video.js "^5.19.2"
-
-videojs-swf@5.4.1:
-  version "5.4.1"
-  resolved "https://registry.yarnpkg.com/videojs-swf/-/videojs-swf-5.4.1.tgz#2077ef71c749f2c7823ef49babae4dd2acb08f87"
 
 videojs-vtt.js@0.12.4:
   version "0.12.4"
@@ -6675,15 +6639,6 @@ xdg-basedir@^2.0.0:
   resolved "https://registry.yarnpkg.com/xdg-basedir/-/xdg-basedir-2.0.0.tgz#edbc903cc385fc04523d966a335504b5504d1bd2"
   dependencies:
     os-homedir "^1.0.0"
-
-xhr@2.2.2:
-  version "2.2.2"
-  resolved "https://registry.yarnpkg.com/xhr/-/xhr-2.2.2.tgz#2ee72571869f8686d41559a9ea286c18971435ff"
-  dependencies:
-    global "~4.3.0"
-    is-function "^1.0.1"
-    parse-headers "^2.0.0"
-    xtend "^4.0.0"
 
 xhr@2.4.0:
   version "2.4.0"
