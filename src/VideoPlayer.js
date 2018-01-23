@@ -3,7 +3,6 @@ import videojs from 'video.js';
 import 'videojs-youtube';
 import 'videojs-markers';
 import ContentEditable from 'react-contenteditable';
-import './videojs.markers.css';
 
 export default class VideoPlayer extends React.Component {
     constructor(props) {
@@ -24,7 +23,14 @@ export default class VideoPlayer extends React.Component {
     componentDidMount() {
         // instantiate Video.js
         this.player = videojs(this.videoNode, this.props);
-        this.player.markers({markers: []});
+        this.player.markers({
+            markerStyle: {
+                'width':'5px',
+                'border-radius': '0%',
+                'background-color': 'red'
+            },
+            markers: [],
+        });
     }
 
     // destroy player on unmount
@@ -99,9 +105,9 @@ export default class VideoPlayer extends React.Component {
     handlePlayRecord(record) {
         this.player.play(this.player.currentTime(record.time));
         this.player.on('timeupdate', () => {
-            if (this.currentTime() >= record.time + record.duration) {
-                this.pause();
-                this.off('timeupdate');
+            if (this.player.currentTime() >= record.time + record.duration) {
+                this.player.pause();
+                this.player.off('timeupdate');
             }
         });
     }
@@ -130,6 +136,7 @@ export default class VideoPlayer extends React.Component {
                               value={this.state.description}
                               onChange={this.handleChangeDescription}></textarea>
                 </div>
+                <div></div>
                 <div className="col-md-10">
                     <h4>Online Records</h4>
                     <table className="table table-striped table-bordered text-center">
