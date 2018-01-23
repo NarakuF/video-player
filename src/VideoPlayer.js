@@ -11,6 +11,7 @@ export default class VideoPlayer extends React.Component {
             record: -1,
             records: [],
             description: "",
+            offline: false,
         };
         this.handleChangeSource = this.handleChangeSource.bind(this);
         this.handleClick = this.handleClick.bind(this);
@@ -18,6 +19,8 @@ export default class VideoPlayer extends React.Component {
         this.handleChangeRecordDescription = this.handleChangeRecordDescription.bind(this);
         this.handleDeleteRecord = this.handleDeleteRecord.bind(this);
         this.handlePlayRecord = this.handlePlayRecord.bind(this);
+        this.handleUpdateRecord = this.handleUpdateRecord.bind(this);
+        this.handleOffline = this.handleOffline.bind(this);
     }
 
     componentDidMount() {
@@ -25,7 +28,7 @@ export default class VideoPlayer extends React.Component {
         this.player = videojs(this.videoNode, this.props);
         this.player.markers({
             markerStyle: {
-                'width':'5px',
+                'width': '5px',
                 'border-radius': '0%',
                 'background-color': 'red'
             },
@@ -40,9 +43,9 @@ export default class VideoPlayer extends React.Component {
         }
     }
 
-    handleChangeSource(event) {
-        event.preventDefault();
-        let url = event.target.elements.source.value;
+    handleChangeSource(e) {
+        e.preventDefault();
+        let url = e.target.elements.source.value;
         if (url.includes("www.youtube.com")) {
             this.player.src({type: 'video/youtube', src: url});
         }
@@ -50,7 +53,7 @@ export default class VideoPlayer extends React.Component {
             this.player.src({src: url});
         }
         this.player.markers.reset([]);
-        this.setState({ record: -1, records: [], description: ""});
+        this.setState({record: -1, records: [], description: "", offline: false});
         console.log(this.state);
     }
 
@@ -61,7 +64,7 @@ export default class VideoPlayer extends React.Component {
                 time: this.player.currentTime(),
                 text: "",
             }]);
-            this.setState({ record: this.player.currentTime() });
+            this.setState({record: this.player.currentTime()});
         }
         else {
             markers.forEach(m => {
@@ -70,31 +73,31 @@ export default class VideoPlayer extends React.Component {
                 }
             })
             this.player.markers.updateTime();
-            this.setState({ record: -1 });
+            this.setState({record: -1});
         }
-        this.setState(prevState => ({ records: markers }));
+        this.setState({records: markers});
     }
 
-    handleChangeDescription(event) {
-        event.preventDefault();
-        this.setState({description: event.target.value});
+    handleChangeDescription(e) {
+        e.preventDefault();
+        this.setState({description: e.target.value});
     }
 
-    handleChangeRecordDescription(event, record) {
+    handleChangeRecordDescription(e, rec) {
         let markers = this.player.markers.getMarkers();
         markers.forEach(m => {
-            if (m.key === record.key) {
-                m.text = event.target.value;
+            if (m.key === rec.key) {
+                m.text = e.target.value;
             }
         });
         this.setState({records: markers});
     }
 
-    handleDeleteRecord(record) {
+    handleDeleteRecord(rec) {
         let markers = this.player.markers.getMarkers();
         let i;
         for (i = 0; i < markers.length; i++) {
-            if (markers[i].key === record.key) {
+            if (markers[i].key === rec.key) {
                 this.player.markers.remove([i]);
                 break;
             }
@@ -102,14 +105,34 @@ export default class VideoPlayer extends React.Component {
         this.setState({records: markers});
     }
 
-    handlePlayRecord(record) {
-        this.player.play(this.player.currentTime(record.time));
+    handlePlayRecord(rec) {
+        this.player.play(this.player.currentTime(rec.time));
         this.player.on('timeupdate', () => {
-            if (this.player.currentTime() >= record.time + record.duration) {
+            if (this.player.currentTime() >= rec.time + rec.duration) {
                 this.player.pause();
                 this.player.off('timeupdate');
             }
         });
+    }
+
+    handleUpdateRecord(rec, n) {
+        let markers = this.player.markers.getMarkers();
+        markers.forEach(m => {
+            if (m.key === rec.key) {
+                if (n === 1) {
+                    m.time = this.player.currentTime();
+                }
+                else if (n === 2) {
+                    m.duration = this.player.currentTime() - m.time;
+                }
+            }
+        });
+        this.player.markers.updateTime();
+        this.setState({records: markers});
+    }
+
+    handleOffline() {
+        this.setState(prevState => ({ offline: !prevState.offline }));
     }
 
     render() {
@@ -124,7 +147,8 @@ export default class VideoPlayer extends React.Component {
                     <video ref={node => this.videoNode = node} className="video-js"></video>
                 </div>
                 <div className="col-md-10 my-4 d-flex justify-content-center">
-                    <button type="button" className={"btn btn-outline-danger" + (this.state.record < 0 ? "" : " active")}
+                    <button type="button"
+                            className={"btn btn-outline-danger" + (this.state.record < 0 ? "" : " active")}
                             data-toggle="button" onClick={this.handleClick}>
                         {this.state.record < 0 ? 'Record' : 'Stop'}
                     </button>
@@ -136,7 +160,54 @@ export default class VideoPlayer extends React.Component {
                               value={this.state.description}
                               onChange={this.handleChangeDescription}></textarea>
                 </div>
-                <div></div>
+                <div className="col-md-10 mb-4">
+                    <button type="button"
+                            className={"btn btn-sm btn-outline-danger my-2" + (this.state.offline ? " active" : "")}
+                            data-toggle="button"
+                            onClick={this.handleOffline}>Offline</button>
+                    {this.state.offline &&
+                    <div>
+                        <h4>Offline Editor</h4>
+                        <table className="table table-striped table-bordered text-center">
+                            <thead>
+                            <tr>
+                                <th style={{width: '5%'}}></th>
+                                <th style={{width: '10%'}}>Begin</th>
+                                <th style={{width: '10%'}}>End</th>
+                                <th style={{width: '40%'}}>Description</th>
+                                <th style={{width: '5%'}}></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {this.state.records.map(rec => {
+                                return (
+                                    <tr key={rec.key}>
+                                        <td>
+                                            <button className="btn btn-sm btn-primary"
+                                                    onClick={e => this.handlePlayRecord(rec)}></button>
+                                        </td>
+                                        <td>{rec.time.toFixed(1)}
+                                            <button className="btn btn-sm btn-outline-danger float-right"
+                                                    onClick={e => this.handleUpdateRecord(rec, 1)}>Save
+                                            </button></td>
+                                        <td>{(rec.time + rec.duration).toFixed(1)}
+                                            <button className="btn btn-sm btn-outline-danger float-right"
+                                                    onClick={e => this.handleUpdateRecord(rec, 2)}>Save
+                                            </button></td>
+                                        <td className="text-justify"><ContentEditable html={rec.text}
+                                                                                      onChange={e => this.handleChangeRecordDescription(e, rec)}/>
+                                        </td>
+                                        <td>
+                                            <button className="btn btn-sm btn-outline-danger"
+                                                    onClick={e => this.handleDeleteRecord(rec)}>Delete
+                                            </button>
+                                        </td>
+                                    </tr>)
+                            })}
+                            </tbody>
+                        </table>
+                    </div>}
+                </div>
                 <div className="col-md-10">
                     <h4>Online Records</h4>
                     <table className="table table-striped table-bordered text-center">
@@ -149,21 +220,18 @@ export default class VideoPlayer extends React.Component {
                         </tr>
                         </thead>
                         <tbody>
-                        {this.state.records.map(record => {
+                        {this.state.records.map(rec => {
                             return (
-                                <tr key={record.key}>
-                                    <td><button className="btn btn-sm btn-primary"
-                                                onClick={e => this.handlePlayRecord(record)}></button></td>
-                                    <td>{record.time.toFixed(2)}</td>
-                                    <td>{(record.time + record.duration).toFixed(2)}</td>
-                                    <td className="text-justify"><ContentEditable html={record.text}
-                                                         onChange={e => this.handleChangeRecordDescription(e, record)}/>
+                                <tr key={rec.key}>
+                                    <td>
+                                        <button className="btn btn-sm btn-primary"
+                                                onClick={e => this.handlePlayRecord(rec)}></button>
                                     </td>
-                                    {/*<td>
-                                        <button className="btn btn-sm btn-outline-danger"
-                                                onClick={e => this.handleDeleteLike(like)}>Delete
-                                        </button>
-                                    </td>*/}
+                                    <td>{rec.time.toFixed(1)}</td>
+                                    <td>{(rec.time + rec.duration).toFixed(1)}</td>
+                                    <td className="text-justify"><ContentEditable html={rec.text}
+                                                                                  onChange={e => this.handleChangeRecordDescription(e, rec)}/>
+                                    </td>
                                 </tr>)
                         })}
                         </tbody>

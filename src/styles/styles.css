@@ -6,17 +6,17 @@ body {
   font-family: sans-serif;
 }
 
-/* Hidden by default, selectively shown. */
+/* Hidden by default, selectively shown.
 .video-js .vjs-current-time { display: block; }
 .video-js .vjs-time-divider { display: block; }
 .video-js .vjs-duration { display: block; }
 .video-js .vjs-mute-control { display: block; }
 .video-js .vjs-volume-control { display: block; }
 
-/* Programmatically hidden with vjs-hidden when no tracks */
+/* Programmatically hidden with vjs-hidden when no tracks
 .video-js .vjs-chapters-button { display: block !important; }
 .video-js .vjs-subtitles-button { display: block !important; }
 .video-js .vjs-captions-button { display: block !important; }
 
-/* Hidden with state classes */
-.video-js .vjs-control-bar { display: flex; }
+/* Hidden with state classes
+.video-js .vjs-control-bar { display: flex; } */
