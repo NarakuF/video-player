@@ -60,11 +60,12 @@ export default class VideoPlayer extends React.Component {
     handleClick() {
         let markers = this.player.markers.getMarkers();
         if (this.state.record < 0) {
+            const time = this.player.currentTime();
             this.player.markers.add([{
-                time: this.player.currentTime(),
+                time: time,
                 text: "",
             }]);
-            this.setState({record: this.player.currentTime()});
+            this.setState({record: time });
         }
         else {
             markers.forEach(m => {
@@ -186,11 +187,11 @@ export default class VideoPlayer extends React.Component {
                                             <button className="btn btn-sm btn-primary"
                                                     onClick={e => this.handlePlayRecord(rec)}></button>
                                         </td>
-                                        <td>{rec.time.toFixed(1)}
+                                        <td>{videojs.formatTime(rec.time)}
                                             <button className="btn btn-sm btn-outline-danger float-right"
                                                     onClick={e => this.handleUpdateRecord(rec, 1)}>Save
                                             </button></td>
-                                        <td>{(rec.time + rec.duration).toFixed(1)}
+                                        <td>{videojs.formatTime(rec.time + rec.duration)}
                                             <button className="btn btn-sm btn-outline-danger float-right"
                                                     onClick={e => this.handleUpdateRecord(rec, 2)}>Save
                                             </button></td>
@@ -227,8 +228,8 @@ export default class VideoPlayer extends React.Component {
                                         <button className="btn btn-sm btn-primary"
                                                 onClick={e => this.handlePlayRecord(rec)}></button>
                                     </td>
-                                    <td>{rec.time.toFixed(1)}</td>
-                                    <td>{(rec.time + rec.duration).toFixed(1)}</td>
+                                    <td>{videojs.formatTime(rec.time)}</td>
+                                    <td>{videojs.formatTime(rec.time + rec.duration)}</td>
                                     <td className="text-justify"><ContentEditable html={rec.text}
                                                                                   onChange={e => this.handleChangeRecordDescription(e, rec)}/>
                                     </td>
