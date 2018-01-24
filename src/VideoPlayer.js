@@ -59,18 +59,20 @@ export default class VideoPlayer extends React.Component {
 
     handleClick() {
         let markers = this.player.markers.getMarkers();
+        const time = this.player.currentTime();
         if (this.state.record < 0) {
-            const time = this.player.currentTime();
+
             this.player.markers.add([{
                 time: time,
+                duration: 0,
                 text: "",
             }]);
-            this.setState({record: time });
+            this.setState({record: time});
         }
         else {
             markers.forEach(m => {
                 if (m.time === this.state.record) {
-                    m.duration = this.player.currentTime() - m.time;
+                    m.duration = time - m.time;
                 }
             })
             this.player.markers.updateTime();
@@ -108,23 +110,27 @@ export default class VideoPlayer extends React.Component {
 
     handlePlayRecord(rec) {
         this.player.play(this.player.currentTime(rec.time));
-        this.player.on('timeupdate', () => {
+        let getToPlay = () => {
             if (this.player.currentTime() >= rec.time + rec.duration) {
                 this.player.pause();
-                this.player.off('timeupdate');
+                this.player.off('timeupdate', getToPlay);
             }
-        });
+        };
+        this.player.on('timeupdate', getToPlay);
     }
 
     handleUpdateRecord(rec, n) {
         let markers = this.player.markers.getMarkers();
+        const time = this.player.currentTime();
         markers.forEach(m => {
             if (m.key === rec.key) {
                 if (n === 1) {
-                    m.time = this.player.currentTime();
+                    const end = m.time + m.duration;
+                    m.time = time;
+                    m.duration = end - m.time;
                 }
                 else if (n === 2) {
-                    m.duration = this.player.currentTime() - m.time;
+                    m.duration = time - m.time;
                 }
             }
         });
@@ -133,7 +139,7 @@ export default class VideoPlayer extends React.Component {
     }
 
     handleOffline() {
-        this.setState(prevState => ({ offline: !prevState.offline }));
+        this.setState(prevState => ({offline: !prevState.offline}));
     }
 
     render() {
@@ -165,7 +171,8 @@ export default class VideoPlayer extends React.Component {
                     <button type="button"
                             className={"btn btn-sm btn-outline-danger my-2" + (this.state.offline ? " active" : "")}
                             data-toggle="button"
-                            onClick={this.handleOffline}>Offline</button>
+                            onClick={this.handleOffline}>Offline
+                    </button>
                     {this.state.offline &&
                     <div>
                         <h4>Offline Editor</h4>
@@ -190,11 +197,13 @@ export default class VideoPlayer extends React.Component {
                                         <td>{videojs.formatTime(rec.time)}
                                             <button className="btn btn-sm btn-outline-danger float-right"
                                                     onClick={e => this.handleUpdateRecord(rec, 1)}>Save
-                                            </button></td>
+                                            </button>
+                                        </td>
                                         <td>{videojs.formatTime(rec.time + rec.duration)}
                                             <button className="btn btn-sm btn-outline-danger float-right"
                                                     onClick={e => this.handleUpdateRecord(rec, 2)}>Save
-                                            </button></td>
+                                            </button>
+                                        </td>
                                         <td className="text-justify"><ContentEditable html={rec.text}
                                                                                       onChange={e => this.handleChangeRecordDescription(e, rec)}/>
                                         </td>
