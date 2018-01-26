@@ -8,8 +8,9 @@ const videoJsOptions = {
     controls: true,
     preload: 'auto',
     sources: [{ src: '//vjs.zencdn.net/v/oceans.mp4' }],
-    width: '1200',
-    height: '700',
+    width: '1056',
+    height: '594',
+    playbackRates: [0.5, 1, 1.5, 2]
 };
 
 ReactDOM.render(<VideoPlayer {...videoJsOptions} />, document.getElementById('root'));
