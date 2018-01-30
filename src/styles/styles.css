@@ -6,6 +6,7 @@ body {
     font-family: sans-serif;
 }
 
+/*
 tbody {
     height: 553px;
     overflow-y: auto;
@@ -14,7 +15,21 @@ tbody {
 
 thead, tbody, tr, td, th {
     display: block;
+}*/
+
+tbody {
+    display: block;
+    height: 553px;
+    overflow: auto;
+    width: 100%;
 }
+
+thead, tbody, tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
 
 /* Hidden by default, selectively shown. */
 .video-js .vjs-current-time {
