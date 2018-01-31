@@ -4,6 +4,14 @@ import "videojs-youtube";
 import "videojs-markers";
 import ContentEditable from "react-contenteditable";
 
+const Status = Object.freeze({
+    VIEW: 1,
+    ENDED: 2,
+    REVIEW: 3,
+    FINISHED: 4,
+    OFFLINE: 5,
+});
+
 export default class VideoPlayer extends React.Component {
     constructor(props) {
         super(props);
@@ -13,7 +21,7 @@ export default class VideoPlayer extends React.Component {
             records: [],
             onlineCopy: [],
             description: "",
-            status: "view",
+            status: Status.VIEW,
         };
         this.reset = this.reset.bind(this);
         this.getIdx = this.getIdx.bind(this);
@@ -29,6 +37,7 @@ export default class VideoPlayer extends React.Component {
         this.offline = this.offline.bind(this);
         this.prev = this.prev.bind(this);
         this.next = this.next.bind(this);
+        this.renderToolBar = this.renderToolBar.bind(this);
     }
 
     componentDidMount() {
@@ -39,7 +48,9 @@ export default class VideoPlayer extends React.Component {
                 "border-radius": "0%",
                 "background-color": "red"
             },
-            onMarkerClick: function() {return false},
+            onMarkerClick: function () {
+                return false
+            },
         });
         this.reset();
     }
@@ -58,11 +69,11 @@ export default class VideoPlayer extends React.Component {
             records: [],
             offlineRecords: [],
             description: "",
-            status: "view",
+            status: Status.VIEW,
         });
         this.player.controlBar.progressControl.disable();
         this.player.one("ended", () => {
-            this.setState({status: "ended"});
+            this.setState({status: Status.ENDED});
             if (this.state.records.length > 0) {
                 this.setState({rec_id: this.state.records[0].key});
                 this.playRecord(this.state.records[0]);
@@ -113,16 +124,16 @@ export default class VideoPlayer extends React.Component {
     changeDescription(e) {
         e.preventDefault();
         this.setState({description: e.target.value});
-        if (this.state.status !== "offline" && this.readyOffline()) {
-            this.setState({status: "finished"});
+        if (this.state.status !== Status.OFFLINE && this.readyOffline()) {
+            this.setState({status: Status.FINISHED});
         }
     }
 
     changeRecordDescription(e, rec) {
         rec.text = e.target.value;
         this.setState({records: this.state.records});
-        if (this.state.status !== "offline" && this.readyOffline()) {
-            this.setState({status: "finished"});
+        if (this.state.status !== Status.OFFLINE && this.readyOffline()) {
+            this.setState({status: Status.FINISHED});
         }
     }
 
@@ -167,7 +178,7 @@ export default class VideoPlayer extends React.Component {
 
     offline() {
         const onlineCopy = JSON.parse(JSON.stringify(this.state.records));
-        this.setState({onlineCopy: onlineCopy, status: "offline"});
+        this.setState({onlineCopy: onlineCopy, status: Status.OFFLINE});
         this.player.controlBar.progressControl.enable();
     }
 
@@ -185,10 +196,49 @@ export default class VideoPlayer extends React.Component {
         }
     }
 
+    renderToolBar(status) {
+        switch (status) {
+            case Status.VIEW:
+                return
+                <button type="button"
+                        className={"btn btn-outline-danger" + (this.state.record < 0 ? "" : " active")}
+                        data-toggle="button" onClick={this.clickRecord}>
+                    {this.state.record < 0 ? "Record" : "Stop"}
+                </button>;
+            case Status.ENDED:
+                return
+                <div className="form-inline w-100 d-flex justify-content-around">
+                    <button className="btn btn-danger"
+                            onClick={() => this.prev()}>Prev
+                    </button>
+                    <button className="btn btn-danger"
+                            onClick={() => this.next()}>Next
+                    </button>
+                    {this.state.records.filter(rec => rec.key === this.state.rec_id).map(rec => {
+                        return (
+                            <input key={rec.key} className="form-control w-75" type="text"
+                                   placeholder="This is about ..."
+                                   value={rec.text}
+                                   onChange={e => this.changeRecordDescription(e, rec)}/>
+                        );
+                    })}
+                </div>;
+            case Status.REVIEW:
+                return <div></div>;
+            case Status.FINISHED:
+                return <div></div>;
+            case Status.OFFLINE:
+                return <div></div>;
+            default:
+                console.log(1);
+                return null;
+        }
+    }
+
     render() {
         return (
             <div className="row">
-                <div className="col-md-12 my-4">
+                <div id="search_bar" className="col-md-12 my-4">
                     <form className="form-inline mb-4 justify-content-around"
                           onSubmit={this.changeSrc}>
                         <input className="form-control" style={{width: "90%"}} type="text" name="source"/>
@@ -203,15 +253,12 @@ export default class VideoPlayer extends React.Component {
                                   onChange={this.changeDescription}></textarea>
                     </div>
                 </div>
-                <div data-vjs-player className="col-md-10">
+                <div id="video_player" data-vjs-player className="col-md-10">
                     <video ref={node => this.videoNode = node} className="video-js"></video>
                 </div>
 
 
-
-
-
-                <div className="col-md-2">
+                <div id="markers_list" className="col-md-2">
                     <table className="table table-sm table-striped table-bordered text-center">
                         <thead>
                         <tr>
@@ -223,9 +270,11 @@ export default class VideoPlayer extends React.Component {
                             return (
                                 <tr key={rec.key}>
                                     <td>
-                                        <button className={"btn btn-sm" + (rec.text ? " btn-success" : " btn-outline-success")}
-                                                disabled={this.state.status === "view"}
-                                                onClick={() => this.playRecord(rec)}>{videojs.formatTime(rec.time)}</button>
+                                        <button
+                                            className={"btn btn-sm" + (rec.text ? " btn-success" : " btn-outline-success")
+                                            + (this.state.rec_id === rec.key ? " active" : "")}
+                                            disabled={this.state.status === Status.VIEW}
+                                            onClick={() => this.playRecord(rec)}>{videojs.formatTime(rec.time)}</button>
                                     </td>
                                 </tr>)
                         })}
@@ -234,54 +283,40 @@ export default class VideoPlayer extends React.Component {
                 </div>
 
 
-
-
-
-
-
-
                 <div className="col-md-10 my-4 d-flex justify-content-around">
-                    {this.state.status === "view" &&
-                        <button type="button"
-                                className={"btn btn-outline-danger" + (this.state.record < 0 ? "" : " active")}
-                                data-toggle="button" onClick={this.clickRecord}>
-                            {this.state.record < 0 ? "Record" : "Stop"}
-                        </button>}
-                    {this.state.status === "ended" &&
-                        <div className="form-inline w-100 d-flex justify-content-around">
-                            <button className="btn btn-danger"
-                                    onClick={() => this.prev()}>Prev
-                            </button>
-                            <button className="btn btn-danger"
-                                    onClick={() => this.next()}>Next
-                            </button>
-                            {this.state.records.filter(rec => rec.key === this.state.rec_id).map(rec => {
-                                return (
-                                    <input key={rec.key} className="form-control w-75" type="text"
-                                           placeholder="This is about ..."
-                                           value={rec.text}
-                                           onChange={e => this.changeRecordDescription(e, rec)}/>
-                                );
-                            })}
-                        </div>}
+                    {this.state.status === Status.VIEW &&
+                    <button type="button"
+                            className={"btn btn-outline-danger" + (this.state.record < 0 ? "" : " active")}
+                            data-toggle="button" onClick={this.clickRecord}>
+                        {this.state.record < 0 ? "Record" : "Stop"}
+                    </button>}
+                    {this.state.status === Status.ENDED &&
+                    <div className="form-inline w-100 d-flex justify-content-around">
+                        <button className="btn btn-danger"
+                                onClick={() => this.prev()}>Prev
+                        </button>
+                        <button className="btn btn-danger"
+                                onClick={() => this.next()}>Next
+                        </button>
+                        {this.state.records.filter(rec => rec.key === this.state.rec_id).map(rec => {
+                            return (
+                                <input key={rec.key} className="form-control w-75" type="text"
+                                       placeholder="This is about ..."
+                                       value={rec.text}
+                                       onChange={e => this.changeRecordDescription(e, rec)}/>
+                            );
+                        })}
+                    </div>}
                 </div>
 
 
-
-
-
-
-
-
-
-
-
                 <div className="col-md-10 my- ">
-                    <button className={"btn btn-outline-danger" + (this.state.status === "finished" ? " active" : "")}
-                            disabled={this.state.status !== "finished"}
-                            onClick={() => this.offline()}>Offline
+                    <button
+                        className={"btn btn-outline-danger" + (this.state.status === Status.FINISHED ? " active" : "")}
+                        disabled={this.state.status !== Status.FINISHED}
+                        onClick={() => this.offline()}>Offline
                     </button>
-                    {this.state.status === "offline" &&
+                    {this.state.status === Status.OFFLINE &&
                     <div>
                         <table className="table table-striped table-bordered text-center">
                             <thead>
@@ -306,8 +341,9 @@ export default class VideoPlayer extends React.Component {
                                                     onClick={() => this.updateRecord(rec, 2)}>Save
                                             </button>
                                         </td>
-                                        <td style={{width: "40%"}} className="text-justify"><ContentEditable html={rec.text}
-                                                                                      onChange={e => this.changeRecordDescription(e, rec)}/>
+                                        <td style={{width: "40%"}} className="text-justify"><ContentEditable
+                                            html={rec.text}
+                                            onChange={e => this.changeRecordDescription(e, rec)}/>
                                         </td>
                                         <td style={{width: "5%"}}>
                                             <button className="btn btn-sm btn-outline-danger"
