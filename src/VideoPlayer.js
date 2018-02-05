@@ -7,8 +7,7 @@ import ContentEditable from "react-contenteditable";
 const Status = Object.freeze({
     VIEW: 1,
     REVIEW: 2,
-    FINISHED: 3,
-    OFFLINE: 4,
+    OFFLINE: 3,
 });
 
 export default class VideoPlayer extends React.Component {
@@ -125,6 +124,7 @@ export default class VideoPlayer extends React.Component {
     }
 
     changeRecordDescription(e, rec) {
+        console.log(this.state.records)
         rec.text = e.target.value;
         this.setState({records: this.state.records});
     }
@@ -162,10 +162,18 @@ export default class VideoPlayer extends React.Component {
         this.setState({records: this.state.records});
     }
 
-    offline() {
-        const onlineCopy = JSON.parse(JSON.stringify(this.state.records));
-        this.setState({onlineCopy: onlineCopy, status: Status.OFFLINE});
-        this.player.controlBar.progressControl.enable();
+    offline(e) {
+        e.preventDefault();
+        let flag = this.state.description;
+        this.state.records.map(rec => flag = flag && rec.text);
+        if (flag) {
+            const onlineCopy = JSON.parse(JSON.stringify(this.state.records));
+            this.setState({onlineCopy: onlineCopy, status: Status.OFFLINE});
+            this.player.controlBar.progressControl.enable();
+        }
+        else {
+            alert("Please fill in all descriptions.");
+        }
     }
 
     prev(e) {
@@ -212,20 +220,54 @@ export default class VideoPlayer extends React.Component {
                     </div>
                     <div className="form-group d-flex justify-content-around">
                         <textarea className="form-control" rows="3"
-                                  placeholder={"This video is about ..."}
+                                  placeholder={"Video Description: This video is about ..."}
                                   value={this.state.description}
                                   onChange={this.changeDescription}></textarea>
                         <button className="btn btn-outline-danger"
-                                onClick={() => console.log(this.state.status)}>Finish
+                                onClick={this.offline}>Finish
                         </button>
                     </div>
                 </form>;
-            case Status.FINISHED:
-                return <div></div>;
             case Status.OFFLINE:
-                return <div></div>;
+                console.log("offline");
+                return <table className="table table-striped table-bordered text-center">
+                    <thead>
+                    <tr>
+                        <th style={{width: "10%"}}>Start</th>
+                        <th style={{width: "10%"}}>End</th>
+                        <th style={{width: "40%"}}>Description</th>
+                        <th style={{width: "5%"}}></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {this.state.records.map(rec => {
+                        return (
+                            <tr key={rec.key}>
+                                <td style={{width: "10%"}}>{videojs.formatTime(rec.time)}
+                                    <button className="btn btn-sm btn-outline-danger float-right"
+                                            onClick={() => this.updateRecord(rec, 1)}>Save
+                                    </button>
+                                </td>
+                                <td style={{width: "10%"}}>{videojs.formatTime(rec.time + rec.duration)}
+                                    <button className="btn btn-sm btn-outline-danger float-right"
+                                            onClick={() => this.updateRecord(rec, 2)}>Save
+                                    </button>
+                                </td>
+                                <td style={{width: "40%"}} className="text-justify"><ContentEditable
+                                    html={rec.text}
+                                    onChange={e => this.changeRecordDescription(e, rec)}/>
+                                </td>
+                                <td style={{width: "5%"}}>
+                                    <button className="btn btn-sm btn-outline-danger"
+                                            onClick={e => this.deleteRecord(rec)}>Delete
+                                    </button>
+                                </td>
+                            </tr>)
+                    })}
+                    </tbody>
+                </table>;
             default:
-                console.log(1);
+                console.log(0);
                 return null;
         }
     }
@@ -246,16 +288,16 @@ export default class VideoPlayer extends React.Component {
 
                 <div id="markers_list" className="col-md-2">
                     <table className="table table-sm table-striped table-bordered text-center">
-                        <thead>
-                        <tr>
-                            <th>Markers</th>
+                        <thead className="mkl-h">
+                        <tr className="mkl-r">
+                            <th className="mkl-h">Markers</th>
                         </tr>
                         </thead>
-                        <tbody>
+                        <tbody className="mkl-b">
                         {this.state.records.map(rec => {
                             return (
-                                <tr key={rec.key}>
-                                    <td>
+                                <tr className="mkl-r" key={rec.key}>
+                                    <td className="mkl-d">
                                         <button
                                             className={"btn btn-sm" + (rec.text ? " btn-success" : " btn-outline-success")
                                             + (this.state.rec_id === rec.key ? " active" : "")}
@@ -270,54 +312,6 @@ export default class VideoPlayer extends React.Component {
 
                 <div className="col-md-10 my-4 d-flex justify-content-around">
                     {this.renderToolBar()}
-                </div>
-
-
-                <div className="col-md-10 my-4">
-                    <button
-                        className={"btn btn-outline-danger" + (this.state.status === Status.FINISHED ? " active" : "")}
-                        disabled={this.state.status !== Status.FINISHED}
-                        onClick={() => this.offline()}>Offline
-                    </button>
-                    {this.state.status === Status.OFFLINE &&
-                    <div>
-                        <table className="table table-striped table-bordered text-center">
-                            <thead>
-                            <tr>
-                                <th style={{width: "10%"}}>Start</th>
-                                <th style={{width: "10%"}}>End</th>
-                                <th style={{width: "40%"}}>Description</th>
-                                <th style={{width: "5%"}}></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {this.state.records.map(rec => {
-                                return (
-                                    <tr key={rec.key}>
-                                        <td style={{width: "10%"}}>{videojs.formatTime(rec.time)}
-                                            <button className="btn btn-sm btn-outline-danger float-right"
-                                                    onClick={() => this.updateRecord(rec, 1)}>Save
-                                            </button>
-                                        </td>
-                                        <td style={{width: "10%"}}>{videojs.formatTime(rec.time + rec.duration)}
-                                            <button className="btn btn-sm btn-outline-danger float-right"
-                                                    onClick={() => this.updateRecord(rec, 2)}>Save
-                                            </button>
-                                        </td>
-                                        <td style={{width: "40%"}} className="text-justify"><ContentEditable
-                                            html={rec.text}
-                                            onChange={e => this.changeRecordDescription(e, rec)}/>
-                                        </td>
-                                        <td style={{width: "5%"}}>
-                                            <button className="btn btn-sm btn-outline-danger"
-                                                    onClick={e => this.deleteRecord(rec)}>Delete
-                                            </button>
-                                        </td>
-                                    </tr>)
-                            })}
-                            </tbody>
-                        </table>
-                    </div>}
                 </div>
             </div>
         )
