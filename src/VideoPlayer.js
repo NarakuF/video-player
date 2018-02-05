@@ -23,7 +23,6 @@ export default class VideoPlayer extends React.Component {
         };
         this.reset = this.reset.bind(this);
         this.getIdx = this.getIdx.bind(this);
-        this.getRec = this.getRec.bind(this);
         this.changeSrc = this.changeSrc.bind(this);
         this.clickRecord = this.clickRecord.bind(this);
         this.changeDescription = this.changeDescription.bind(this);
@@ -80,10 +79,6 @@ export default class VideoPlayer extends React.Component {
 
     getIdx(key = this.state.rec_id) {
         return this.state.records.findIndex(rec => rec.key === key);
-    }
-
-    getRec(key) {
-        return this.state.records.find(rec => rec.key === key);
     }
 
     changeSrc(e) {
