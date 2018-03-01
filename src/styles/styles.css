@@ -6,13 +6,13 @@
     font-family: sans-serif;
 }
 
-.mkl-b {
+.rec-b {
     height: 553px;
     overflow-y: auto;
     width: 100%;
 }
 
-.mkl-h, .mkl-b, .mkl-r, .mkl-d, .mkl-h {
+.rec-h, .rec-b, .rec-r, .rec-d, .rec-h {
     display: block;
 }
 
