@@ -149,7 +149,7 @@ export default class VideoPlayer extends React.Component {
     }
 
     playRecord(key) {
-        //window.scrollTo(0,0);
+        this.videoNode.scrollIntoView();
         if (key !== "") {
             const rec = this.state.records[this.getIdx(key)];
             this.player.play(this.player.currentTime(rec.time));
