@@ -1,8 +1,9 @@
-import React from "react";
-import videojs from "video.js";
-import "videojs-youtube";
-import "videojs-markers";
-import ContentEditable from "react-contenteditable";
+import React from 'react';
+import videojs from 'video.js';
+import 'videojs-youtube';
+import 'videojs-markers';
+import ContentEditable from 'react-contenteditable';
+import axios from 'axios';
 
 const Status = Object.freeze({
     VIEW: 1,
@@ -37,6 +38,7 @@ export default class VideoPlayer extends React.Component {
         this.prev = this.prev.bind(this);
         this.next = this.next.bind(this);
         this.changeTime = this.changeTime.bind(this);
+        this.save = this.save.bind(this);
         this.renderOfflineTable = this.renderOfflineTable.bind(this);
         this.renderToolBar = this.renderToolBar.bind(this);
     }
@@ -182,8 +184,9 @@ export default class VideoPlayer extends React.Component {
             const time = this.player.currentTime();
             let rec = this.state.records[this.getIdx(key)];
             if (n === 1) {
-                const end = rec.time + rec.duration;
+                let end = rec.time + rec.duration;
                 rec.time = time;
+                end = Math.max(time, end);
                 rec.duration = end - rec.time;
             }
             else {
@@ -228,6 +231,17 @@ export default class VideoPlayer extends React.Component {
     changeTime(time) {
         let curTime = this.player.currentTime();
         this.player.currentTime(curTime + time);
+    }
+
+    save() {
+        const data = {
+            src: this.player.currentSrc(),
+            desc: this.state.description,
+            online: this.state.onlineCopy,
+            offline: this.state.records,
+        }
+        axios.post('/save', data).then(res => console.log(res))
+            .then(err => console.log(err));
     }
 
     renderOfflineTable() {
@@ -302,14 +316,14 @@ export default class VideoPlayer extends React.Component {
                 return <div className="d-flex justify-content-around">
                     <div className="btn-group">
                         <button className="btn btn-outline-danger"
-                                onClick={() => this.changeTime(-this.state.timeOffset - 0.4)}>-
+                                onClick={() => this.changeTime(-this.state.timeOffset - 0.4)}>{"<"}
                         </button>
                         <input className="w-25 text-center"
                                type="number"
                                value={this.state.timeOffset}
                                onChange={e => this.setState({timeOffset: Math.max(e.target.value, 0)})}/>
                         <button className="btn btn-outline-danger"
-                                onClick={() => this.changeTime(this.state.timeOffset)}>+
+                                onClick={() => this.changeTime(this.state.timeOffset)}>{">"}
                         </button>
                     </div>
                     <button className="btn btn-outline-danger mr-3"
@@ -321,12 +335,14 @@ export default class VideoPlayer extends React.Component {
                     <button className="btn btn-success mr-3"
                             onClick={this.addRecord}>Add
                     </button>
-                    <button className="btn btn-danger"
+                    <button className="btn btn-danger mr-3"
                             onClick={() => this.deleteRecord()}>Delete
+                    </button>
+                    <button className="btn btn-info"
+                            onClick={() => this.save()}>SAVE
                     </button>
                 </div>;
             default:
-                console.log(0);
                 return null;
         }
     }
