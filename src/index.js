@@ -10,7 +10,10 @@ const videoJsOptions = {
     sources: [{src: '//vjs.zencdn.net/v/oceans.mp4'}],
     width: '1056',
     height: '594',
-    playbackRates: [0.5, 1, 1.5, 2, 10]
+    playbackRates: [0.5, 1, 1.5, 2, 3, 10],
+    controlBar: {
+        volumePanel: {inline: false}
+    },
 };
 
 ReactDOM.render(<VideoPlayer {...videoJsOptions} />, document.getElementById('root'));

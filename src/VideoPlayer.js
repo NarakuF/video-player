@@ -43,6 +43,7 @@ export default class VideoPlayer extends React.Component {
 
     componentDidMount() {
         this.player = videojs(this.videoNode, this.props);
+        console.log(1)
         this.player.markers({
             markerStyle: {
                 "width": "5px",

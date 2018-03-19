@@ -16,7 +16,6 @@
     display: block;
 }
 
-/* Hidden by default, selectively shown. */
 .video-js .vjs-current-time {
     display: block;
 }
@@ -37,12 +36,7 @@
     display: block;
 }
 
-/*.vjs-progress-control { pointer-events: none; }*/
-
-/* Programmatically hidden with vjs-hidden when no tracks.
-.video-js .vjs-chapters-button { display: block !important; }
-.video-js .vjs-subtitles-button { display: block !important; }
-.video-js .vjs-captions-button { display: block !important; }
-
-/* Hidden with state classes.
-.video-js .vjs-control-bar { display: flex; } */
+.video-js .vjs-control-bar {
+    visibility: visible !important;
+    opacity: 1 !important;
+}
