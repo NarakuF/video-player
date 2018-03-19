@@ -173,7 +173,8 @@ export default class VideoPlayer extends React.Component {
             duration: 0,
             text: "",
         }]);
-        this.setState({records: markers});
+        const key = markers.find(m => m.time === time && m.duration === 0).key;
+        this.setState({rec_key: key, records: markers});
     }
 
     updateRecord(n, key = this.state.rec_key) {
@@ -301,7 +302,7 @@ export default class VideoPlayer extends React.Component {
                 return <div className="d-flex justify-content-around">
                     <div className="btn-group">
                         <button className="btn btn-outline-danger"
-                                onClick={() => this.changeTime(-this.state.timeOffset - 0.5)}>-
+                                onClick={() => this.changeTime(-this.state.timeOffset - 0.4)}>-
                         </button>
                         <input className="w-25 text-center"
                                type="number"
