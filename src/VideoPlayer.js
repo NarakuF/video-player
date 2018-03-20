@@ -45,7 +45,6 @@ export default class VideoPlayer extends React.Component {
 
     componentDidMount() {
         this.player = videojs(this.videoNode, this.props);
-        console.log(1)
         this.player.markers({
             markerStyle: {
                 "width": "5px",
@@ -99,12 +98,12 @@ export default class VideoPlayer extends React.Component {
 
     changeSrc(e) {
         e.preventDefault();
-        const url = e.target.elements.source.value;
-        if (url.includes("www.youtube.com")) {
-            this.player.src({type: "video/youtube", src: url});
+        const src = e.target.elements.source.value;
+        if (src.includes("www.youtube.com")) {
+            this.player.src({type: "video/youtube", src: src});
         }
         else {
-            this.player.src({src: url});
+            this.player.src({src: src});
         }
         this.reset();
     }
