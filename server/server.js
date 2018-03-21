@@ -15,7 +15,7 @@ app.get('*', (req, res) => res.sendFile(path.join(publicPath, 'index.html')));
 app.post('/save', function(req, res) {
     const data = req.body;
     const fileName = data.src.includes('www.youtube.com') ? data.src.substr(data.src.indexOf('=') + 1) : data.src.replace(/[\/:*?"<>|]/g, '_');
-    fs.writeFile(path.join(__dirname, '..', 'data', `${fileName}.json`), JSON.stringify(data), err => {
+    fs.writeFile(`${fileName}.json`, JSON.stringify(data), err => {
         if (err) {
             console.log(err);
         } else {
