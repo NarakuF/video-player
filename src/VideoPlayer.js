@@ -23,6 +23,7 @@ export default class VideoPlayer extends React.Component {
             status: Status.VIEW,
             timeOffset: 1,
         };
+        this.handleKeyPress = this.handleKeyPress.bind(this);
         this.reset = this.reset.bind(this);
         this.getIdx = this.getIdx.bind(this);
         this.getKey = this.getKey.bind(this);
@@ -37,7 +38,7 @@ export default class VideoPlayer extends React.Component {
         this.offline = this.offline.bind(this);
         this.prev = this.prev.bind(this);
         this.next = this.next.bind(this);
-        this.changeTime = this.changeTime.bind(this);
+        this.jump = this.jump.bind(this);
         this.save = this.save.bind(this);
         this.renderOfflineTable = this.renderOfflineTable.bind(this);
         this.renderToolBar = this.renderToolBar.bind(this);
@@ -56,11 +57,45 @@ export default class VideoPlayer extends React.Component {
             },
         });
         this.reset();
+        window.addEventListener('keydown', this.handleKeyPress);
     }
 
     componentWillUnmount() {
         if (this.player) {
             this.player.dispose();
+            window.removeEventListener('keydown', this.handleKeyPress);
+        }
+    }
+
+    handleKeyPress(e) {
+        e = e || window.event;
+        const target = e.target || e.srcElement;
+        const targetTagName = (target.nodeType === 1) ? target.nodeName.toUpperCase() : "";
+        console.log(targetTagName)
+        if (this.player && this.state.status === Status.OFFLINE && !/INPUT|SELECT|TEXTAREA|DIV/.test(targetTagName)) {
+            switch (e.keyCode) {
+                // Space
+                case 32:
+                    this.player.paused() ? this.player.play() : this.player.pause();
+                    break;
+                // ArrowLeft
+                case 37:
+                    this.jump(-this.state.timeOffset - 0.4);
+                    break;
+                // ArrowUp
+                case 38:
+                    this.prev();
+                    break;
+                // ArrowRight
+                case 39:
+                    this.jump();
+                    break;
+                case 40:
+                    this.next();
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -134,7 +169,6 @@ export default class VideoPlayer extends React.Component {
     }
 
     changeRecordDescription(e, rec) {
-        console.log(this.state.records)
         rec.text = e.target.value;
         this.setState({records: this.state.records});
     }
@@ -145,8 +179,7 @@ export default class VideoPlayer extends React.Component {
             const idx = markers.findIndex(m => m.key === key);
             this.player.markers.remove([idx]);
             const newKey = this.getKey(Math.min(idx, markers.length - 1));
-            this.playRecord(newKey);
-            this.setState({records: markers});
+            this.setState({rec_key: newKey, records: markers});
         }
     }
 
@@ -166,7 +199,7 @@ export default class VideoPlayer extends React.Component {
         this.setState({rec_key: key});
     }
 
-    addRecord(){
+    addRecord() {
         const markers = this.player.markers.getMarkers();
         const time = this.player.currentTime();
         this.player.markers.add([{
@@ -211,25 +244,23 @@ export default class VideoPlayer extends React.Component {
         }
     }
 
-    prev(e) {
-        e.preventDefault();
+    prev() {
         const idx = this.getIdx();
         if (idx - 1 >= 0) {
             this.playRecord(this.getKey(idx - 1));
         }
     }
 
-    next(e) {
-        e.preventDefault();
+    next() {
         const idx = this.getIdx();
         if (idx + 1 < this.state.records.length) {
             this.playRecord(this.getKey(idx + 1));
         }
     }
 
-    changeTime(time) {
-        let curTime = this.player.currentTime();
-        this.player.currentTime(curTime + time);
+    // fast forward or rewind the video
+    jump(offset = this.state.timeOffset) {
+        this.player.currentTime(this.player.currentTime() + offset);
     }
 
     save() {
@@ -238,9 +269,8 @@ export default class VideoPlayer extends React.Component {
             desc: this.state.description,
             online: this.state.onlineCopy,
             offline: this.state.records,
-        }
-        axios.post('/save', data).then(res => console.log(res))
-            .then(err => console.log(err));
+        };
+        axios.post('/save', data).then().then();
     }
 
     renderOfflineTable() {
@@ -259,7 +289,7 @@ export default class VideoPlayer extends React.Component {
                     <tr key={rec.key}>
                         <td>
                             <button
-                                className={"btn btn-sm btn-outline-danger"
+                                className={"btn btn btn-outline-danger"
                                 + (this.state.rec_key === rec.key ? " active" : "")}
                                 onClick={() => this.playRecord(rec.key)}></button>
                         </td>
@@ -284,7 +314,7 @@ export default class VideoPlayer extends React.Component {
                     {this.state.record < 0 ? "Record" : "Stop"}
                 </button>;
             case Status.REVIEW:
-                return <form className="w-100">
+                return <div className="w-100">
                     <div className="form-group mb-4 d-flex justify-content-around">
                         <button className="btn btn-danger"
                                 onClick={this.prev}>Prev
@@ -310,32 +340,32 @@ export default class VideoPlayer extends React.Component {
                                 onClick={this.offline}>Finish
                         </button>
                     </div>
-                </form>;
+                </div>;
             case Status.OFFLINE:
                 return <div className="d-flex justify-content-around">
                     <div className="btn-group">
                         <button className="btn btn-outline-danger"
-                                onClick={() => this.changeTime(-this.state.timeOffset - 0.4)}>{"<"}
+                                onClick={() => this.jump(-this.state.timeOffset - 0.4)}>{"<"}
                         </button>
                         <input className="w-25 text-center"
                                type="number"
                                value={this.state.timeOffset}
                                onChange={e => this.setState({timeOffset: Math.max(e.target.value, 0)})}/>
                         <button className="btn btn-outline-danger"
-                                onClick={() => this.changeTime(this.state.timeOffset)}>{">"}
+                                onClick={() => this.jump()}>{">"}
                         </button>
                     </div>
                     <button className="btn btn-outline-danger mr-3"
-                            onClick={() => this.updateRecord(1)}>Save as Start
+                            onClick={() => this.updateRecord(1)}>Set Start
                     </button>
                     <button className="btn btn-outline-danger mr-3"
-                            onClick={() => this.updateRecord(2)}>Save as End
-                    </button>
-                    <button className="btn btn-success mr-3"
-                            onClick={this.addRecord}>Add
+                            onClick={() => this.updateRecord(2)}>Set End
                     </button>
                     <button className="btn btn-danger mr-3"
                             onClick={() => this.deleteRecord()}>Delete
+                    </button>
+                    <button className="btn btn-success mr-3"
+                            onClick={this.addRecord}>Add
                     </button>
                     <button className="btn btn-info"
                             onClick={() => this.save()}>SAVE
