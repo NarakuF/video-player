@@ -67,6 +67,7 @@ export default class VideoPlayer extends React.Component {
         }
     }
 
+    // Handle keyboard event
     handleKeyPress(e) {
         e = e || window.event;
         const target = e.target || e.srcElement;
@@ -80,7 +81,7 @@ export default class VideoPlayer extends React.Component {
                     break;
                 // ArrowLeft
                 case 37:
-                    this.jump(-this.state.timeOffset - 0.4);
+                    this.jump(- this.state.timeOffset - 0.4);
                     break;
                 // ArrowUp
                 case 38:
@@ -90,8 +91,17 @@ export default class VideoPlayer extends React.Component {
                 case 39:
                     this.jump();
                     break;
+                // ArrowDown
                 case 40:
                     this.next();
+                    break;
+                // OpenBracket
+                case 219:
+                    this.updateRecord(1);
+                    break;
+                // CloseBracket
+                case 221:
+                    this.updateRecord(2);
                     break;
                 default:
                     break;
@@ -99,6 +109,7 @@ export default class VideoPlayer extends React.Component {
         }
     }
 
+    // Reset the state after refresh
     reset() {
         this.player.markers.reset([]);
         this.setState({
@@ -120,10 +131,12 @@ export default class VideoPlayer extends React.Component {
         });
     }
 
+    // Get the index of the record with the given record key
     getIdx(key = this.state.rec_key) {
         return this.state.records.findIndex(rec => rec.key === key);
     }
 
+    // Get the key of the record with the given record index
     getKey(idx) {
         if (idx >= 0 && idx < this.state.records.length) {
             return this.state.records[idx].key;
@@ -131,6 +144,7 @@ export default class VideoPlayer extends React.Component {
         return "";
     }
 
+    // Change the source of the video
     changeSrc(e) {
         e.preventDefault();
         const src = e.target.elements.source.value;
@@ -143,6 +157,7 @@ export default class VideoPlayer extends React.Component {
         this.reset();
     }
 
+    // Start or end recording
     clickRecord() {
         const markers = this.player.markers.getMarkers();
         const time = this.player.currentTime();
@@ -163,16 +178,19 @@ export default class VideoPlayer extends React.Component {
         this.setState({records: markers});
     }
 
+    // Change the description of the video
     changeDescription(e) {
         e.preventDefault();
         this.setState({description: e.target.value});
     }
 
+    // Change the description of the selected record
     changeRecordDescription(e, rec) {
         rec.text = e.target.value;
         this.setState({records: this.state.records});
     }
 
+    // Delete the selected record
     deleteRecord(key = this.state.rec_key) {
         if (key !== "") {
             const markers = this.player.markers.getMarkers();
@@ -183,6 +201,7 @@ export default class VideoPlayer extends React.Component {
         }
     }
 
+    // Play the selected record
     playRecord(key) {
         this.videoNode.scrollIntoView();
         if (key !== "") {
@@ -199,6 +218,7 @@ export default class VideoPlayer extends React.Component {
         this.setState({rec_key: key});
     }
 
+    // Add a new record
     addRecord() {
         const markers = this.player.markers.getMarkers();
         const time = this.player.currentTime();
@@ -211,6 +231,7 @@ export default class VideoPlayer extends React.Component {
         this.setState({rec_key: key, records: markers});
     }
 
+    // Update the selected record
     updateRecord(n, key = this.state.rec_key) {
         if (key !== "") {
             const time = this.player.currentTime();
@@ -229,6 +250,7 @@ export default class VideoPlayer extends React.Component {
         }
     }
 
+    // Go to offline mode when online record is finished
     offline(e) {
         e.preventDefault();
         let flag = this.state.description;
@@ -244,6 +266,7 @@ export default class VideoPlayer extends React.Component {
         }
     }
 
+    // Go to the prev record
     prev() {
         const idx = this.getIdx();
         if (idx - 1 >= 0) {
@@ -251,6 +274,7 @@ export default class VideoPlayer extends React.Component {
         }
     }
 
+    // Go to the next record
     next() {
         const idx = this.getIdx();
         if (idx + 1 < this.state.records.length) {
@@ -263,6 +287,7 @@ export default class VideoPlayer extends React.Component {
         this.player.currentTime(this.player.currentTime() + offset);
     }
 
+    // Save to local as json file
     save() {
         const data = {
             src: this.player.currentSrc(),
