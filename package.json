@@ -12,6 +12,7 @@
     "react-scripts": "1.0.17",
     "video.js": "^6.6.0",
     "videojs-markers": "^1.0.1",
+    "videojs-playlist": "^4.2.0",
     "videojs-youtube": "^2.4.1"
   },
   "scripts": {

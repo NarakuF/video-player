@@ -11,11 +11,28 @@ app.use(bodyParser.json());
 const publicPath = path.join(__dirname, '..', 'public');
 const dataPath = path.join(__dirname, '..', 'data');
 
+fs.readFile('peanut_butter_and_jelly_sandwich.txt', 'utf-8', (err, data) => {
+    if (err) {
+        console.log(err);
+    }
+    console.log(data);
+});
+
+
 app.use(Express.static(publicPath));
-app.get('*', (req, res) => res.sendFile(path.join(publicPath, 'index.html')));
-app.post('/save', function(req, res) {
+
+app.get('/playlist', (req, res) => {
+    fs.readFile('peanut_butter_and_jelly_sandwich.txt', 'utf-8', (err, data) => {
+        if (err) {
+            throw err;
+        }
+        res.send(data.toString().split('\n'));
+    });
+});
+
+app.post('/save', (req, res) => {
     const data = req.body;
-    const fileName = data.src.includes('www.youtube.com') ? data.src.substr(data.src.indexOf('=') + 1) : data.src.replace(/[\/:*?"<>|]/g, '_');
+    const fileName = data.src.includes('www.youtube.com') ? data.src.substr(data.src.indexOf('=') + 1) : data.src.replace(/[\/:*?'<>|]/g, '_');
     fs.writeFile(path.join(dataPath, `${fileName}.json`), JSON.stringify(data), err => {
         if (err) {
             console.log(err);

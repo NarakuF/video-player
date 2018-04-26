@@ -2856,7 +2856,7 @@ global-prefix@^1.0.1:
     is-windows "^1.0.1"
     which "^1.2.14"
 
-global@4.3.2, global@^4.3.1, global@~4.3.0:
+global@4.3.2, global@^4.3.1, global@^4.3.2, global@~4.3.0:
   version "4.3.2"
   resolved "https://registry.yarnpkg.com/global/-/global-4.3.2.tgz#e76989268a6c74c38908b1305b10fc0e394e9d0f"
   dependencies:
@@ -6498,6 +6498,19 @@ verror@1.10.0:
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
 
+"video.js@^5.19.2 || ^6.2.8":
+  version "6.7.3"
+  resolved "https://registry.yarnpkg.com/video.js/-/video.js-6.7.3.tgz#616ab015a74bb1bc8b092e9b4b8022519756f7c0"
+  dependencies:
+    babel-runtime "^6.9.2"
+    global "4.3.2"
+    safe-json-parse "4.0.0"
+    tsml "1.0.1"
+    videojs-font "2.1.0"
+    videojs-ie8 "1.1.2"
+    videojs-vtt.js "0.12.5"
+    xhr "2.4.0"
+
 "video.js@^5.6.0 || ^6.2.8", video.js@^6.6.0:
   version "6.6.0"
   resolved "https://registry.yarnpkg.com/video.js/-/video.js-6.6.0.tgz#91760dfdb9c95a43a005bb03888ed6c5c6e785b0"
@@ -6525,9 +6538,22 @@ videojs-markers@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/videojs-markers/-/videojs-markers-1.0.1.tgz#d7f8d804253fd587813271f8db308a22b9f7df34"
 
+videojs-playlist@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/videojs-playlist/-/videojs-playlist-4.2.0.tgz#f1482637de73be2b4bb0e896606f943bb961b0e0"
+  dependencies:
+    global "^4.3.2"
+    video.js "^5.19.2 || ^6.2.8"
+
 videojs-vtt.js@0.12.4:
   version "0.12.4"
   resolved "https://registry.yarnpkg.com/videojs-vtt.js/-/videojs-vtt.js-0.12.4.tgz#38f2499e31efb3fa93590ddad4cb663275a4b161"
+  dependencies:
+    global "^4.3.1"
+
+videojs-vtt.js@0.12.5:
+  version "0.12.5"
+  resolved "https://registry.yarnpkg.com/videojs-vtt.js/-/videojs-vtt.js-0.12.5.tgz#32852732741c8b4e7a4314caa2cd93646a9c2d40"
   dependencies:
     global "^4.3.1"
 
